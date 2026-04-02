@@ -29,3 +29,7 @@ python -m unittest discover -s tests -p 'test_*.py'
 ## Next steps
 
 See [ROADMAP.md](ROADMAP.md) for milestones and backlog priorities.
+## Despliegue en servidor
+
+Consulta la guía en español: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
+
