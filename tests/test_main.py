@@ -41,6 +41,14 @@ class TestWebAppRoutes(unittest.TestCase):
             self.assertEqual("200 OK", status)
             self.assertIn("Modelo", html)
 
+
+    def test_admin_and_gerente_use_different_colors(self) -> None:
+        _, admin_html = handle_path("/administrador")
+        _, gerente_html = handle_path("/gerente")
+        self.assertIn("#1d4ed8", admin_html)
+        self.assertIn("#9333ea", gerente_html)
+        self.assertNotEqual(admin_html, gerente_html)
+
     def test_not_found(self) -> None:
         status, _ = handle_path("/invalida")
         self.assertEqual("404 Not Found", status)

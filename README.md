@@ -3,8 +3,8 @@
 Friolam ahora está preparado como **web app** con vistas separadas por rol:
 
 - Técnico
-- Administrador
-- Gerente
+- Administrador (azul)
+- Gerente (morado)
 
 ## Ejecutar local
 

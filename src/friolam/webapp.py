@@ -15,7 +15,7 @@ def get_role_data() -> dict[str, object]:
     }
 
 
-def render_page(title: str, body: str) -> str:
+def render_page(title: str, body: str, accent_color: str = "#2563eb") -> str:
     """Render basic HTML page."""
     return f"""<!doctype html>
 <html lang='es'>
@@ -25,8 +25,9 @@ def render_page(title: str, body: str) -> str:
   <title>{escape(title)}</title>
   <style>
     body {{ font-family: Arial, sans-serif; margin: 2rem; }}
-    .card {{ border: 1px solid #ddd; border-radius: 8px; padding: 1rem; max-width: 800px; }}
-    nav a {{ margin-right: 1rem; }}
+    .card {{ border: 2px solid {escape(accent_color)}; border-radius: 8px; padding: 1rem; max-width: 800px; }}
+    h1 {{ color: {escape(accent_color)}; }}
+    nav a {{ margin-right: 1rem; color: {escape(accent_color)}; }}
   </style>
 </head>
 <body>
@@ -55,24 +56,24 @@ def handle_path(path: str) -> tuple[str, str]:
             "<li><strong>Gerente:</strong> seguimiento estratégico.</li>"
             "</ul>"
         )
-        return "200 OK", render_page("Friolam Web App", body)
+        return "200 OK", render_page("Friolam Web App", body, accent_color="#334155")
 
     if path == "/tecnico":
         tecnico = data["tecnico"]
         body = f"<h2>Modelo Técnico</h2><p>{escape(tecnico.resumen())}</p>"
-        return "200 OK", render_page("Vista Técnico", body)
+        return "200 OK", render_page("Vista Técnico", body, accent_color="#0f766e")
 
     if path == "/administrador":
         administrador = data["administrador"]
         body = f"<h2>Modelo Administrador</h2><p>{escape(administrador.resumen())}</p>"
-        return "200 OK", render_page("Vista Administrador", body)
+        return "200 OK", render_page("Vista Administrador", body, accent_color="#1d4ed8")
 
     if path == "/gerente":
         gerente = data["gerente"]
         body = f"<h2>Modelo Gerente</h2><p>{escape(gerente.resumen())}</p>"
-        return "200 OK", render_page("Vista Gerente", body)
+        return "200 OK", render_page("Vista Gerente", body, accent_color="#9333ea")
 
-    return "404 Not Found", render_page("No encontrado", "<p>Ruta no válida.</p>")
+    return "404 Not Found", render_page("No encontrado", "<p>Ruta no válida.</p>", accent_color="#dc2626")
 
 
 def app(environ: dict, start_response) -> list[bytes]:
