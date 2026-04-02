@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingreso de Datos</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Ingreso de datos</h1>
+
+    <form id="persona-form" class="card">
+      <div class="field-row">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required />
+      </div>
+
+      <div class="field-row">
+        <label for="es-imputado">¿Es imputado?</label>
+        <select id="es-imputado" name="esImputado" required>
+          <option value="">Seleccione...</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <section class="representantes card" aria-labelledby="representantes-title">
+        <div class="section-header">
+          <h2 id="representantes-title">Representantes</h2>
+          <button type="button" id="agregar-representante">+ Agregar representante</button>
+        </div>
+        <div id="representantes-lista"></div>
+      </section>
+
+      <button type="submit" class="primary">Guardar</button>
+    </form>
+
+    <pre id="resultado"></pre>
+  </main>
+
+  <template id="representante-template">
+    <article class="representante-item">
+      <div class="field-row">
+        <label>Nombre del representante</label>
+        <input name="representanteNombre" type="text" required />
+      </div>
+      <div class="field-row">
+        <label>Tipo</label>
+        <input name="representanteTipo" type="text" placeholder="Ej: Abogado" />
+      </div>
+      <div class="field-row">
+        <label>Módulo</label>
+        <input name="representanteModulo" type="text" placeholder="Ingrese módulo" />
+      </div>
+      <button type="button" class="danger eliminar-representante">Eliminar</button>
+    </article>
+  </template>
+
+  <script src="./app.js"></script>
+</body>
+</html>
