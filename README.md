@@ -31,3 +31,7 @@ python -m unittest discover -s tests -p 'test_*.py'
 ## Documentación de despliegue
 
 Guía completa de servidor: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
+
+## FAQ rápida
+
+- **¿Puedo subirlo por FTP?** Sí, preferiblemente SFTP. Revisa la sección FTP en `docs/SERVER_INSTALL_ES.md`.

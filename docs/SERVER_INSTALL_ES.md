@@ -110,3 +110,43 @@ sudo systemctl restart friolam
 ---
 
 Si quieres, te puedo dejar también el archivo exacto de Nginx para producción con HTTPS.
+
+## 9) ¿Se puede subir por FTP a cualquier servidor?
+
+Sí, **se puede**, pero no es lo más recomendable para despliegues repetibles.
+
+### Cuándo sí te sirve FTP/SFTP
+
+- Tienes hosting sencillo sin acceso Git.
+- Solo necesitas una instalación básica/manual.
+
+### Recomendación
+
+- Mejor usar **SFTP** (más seguro) en vez de FTP plano.
+- Mantener en el servidor una carpeta como `/opt/friolam/app` y subir allí el proyecto.
+
+### Flujo mínimo por SFTP
+
+1. Subir archivos del proyecto a `/opt/friolam/app`.
+2. Entrar por SSH y crear entorno virtual:
+   ```bash
+   cd /opt/friolam/app
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install --upgrade pip
+   pip install -e .
+   ```
+3. Ejecutar prueba:
+   ```bash
+   .venv/bin/friolam-web
+   ```
+4. Configurar `systemd` como en la sección anterior para que quede persistente.
+
+### Limitaciones de FTP
+
+- No tienes control de versiones como con Git.
+- Es más fácil sobrescribir archivos por error.
+- Más difícil automatizar despliegues.
+
+Si quieres, te preparo una variante del manual específica para **hosting compartido (cPanel/Plesk)**.
+
