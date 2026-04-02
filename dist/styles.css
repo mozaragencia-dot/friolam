@@ -1,0 +1,61 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f6f8;
+}
+
+.container {
+  max-width: 840px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d9dee5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.field-row {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+input,
+select,
+button {
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.representante-item {
+  border: 1px solid #e6ebf0;
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 0.7rem;
+  background: #fbfcfd;
+}
+
+.primary {
+  background: #0b5fff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.danger {
+  background: #fff;
+  border: 1px solid #cf2f2f;
+  color: #cf2f2f;
+  border-radius: 6px;
+}
