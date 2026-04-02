@@ -10,37 +10,38 @@ from friolam.backend import FriolamBackend, default_backend
 
 
 def render_page(title: str, body: str, accent_color: str = "#2563eb") -> str:
-    """Render basic HTML page."""
+    """Render HTML page styled with Tailwind CSS."""
     return f"""<!doctype html>
 <html lang='es'>
 <head>
   <meta charset='utf-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <title>{escape(title)}</title>
-  <style>
-    body {{ font-family: Arial, sans-serif; margin: 2rem; }}
-    .card {{ border: 2px solid {escape(accent_color)}; border-radius: 8px; padding: 1rem; max-width: 800px; }}
-    h1 {{ color: {escape(accent_color)}; }}
-    nav a {{ margin-right: 1rem; color: {escape(accent_color)}; }}
-  </style>
+  <script src='https://cdn.tailwindcss.com'></script>
 </head>
-<body>
-  <h1>{escape(title)}</h1>
-  <nav>
-    <a href='/'>Inicio</a>
-    <a href='/tecnico'>Técnico</a>
-    <a href='/administrador'>Administrador</a>
-    <a href='/gerente'>Gerente</a>
-  </nav>
-  <div class='card'>{body}</div>
+<body class='bg-slate-100 text-slate-800'>
+  <main class='mx-auto max-w-4xl p-6'>
+    <header class='mb-6 rounded-xl border-l-8 bg-white p-5 shadow' style='border-color: {escape(accent_color)}'>
+      <h1 class='text-3xl font-bold' style='color: {escape(accent_color)}'>{escape(title)}</h1>
+      <nav class='mt-3 flex flex-wrap gap-3 text-sm font-semibold'>
+        <a class='rounded bg-slate-100 px-3 py-1 hover:bg-slate-200' href='/'>Inicio</a>
+        <a class='rounded bg-slate-100 px-3 py-1 hover:bg-slate-200' href='/tecnico'>Técnico</a>
+        <a class='rounded bg-slate-100 px-3 py-1 hover:bg-slate-200' href='/administrador'>Administrador</a>
+        <a class='rounded bg-slate-100 px-3 py-1 hover:bg-slate-200' href='/gerente'>Gerente</a>
+      </nav>
+    </header>
+    <section class='rounded-xl bg-white p-6 shadow'>
+      {body}
+    </section>
+  </main>
 </body>
 </html>"""
 
 
 def _role_html(role_data: dict[str, str | int], title: str) -> str:
     return (
-        f"<h2>{escape(title)}</h2>"
-        f"<p><strong>Nombre:</strong> {escape(str(role_data['nombre']))}</p>"
+        f"<h2 class='mb-4 text-2xl font-semibold'>{escape(title)}</h2>"
+        f"<p class='mb-2'><strong>Nombre:</strong> {escape(str(role_data['nombre']))}</p>"
         f"<p><strong>{escape(str(role_data['detalle_1']))}:</strong> {escape(str(role_data['detalle_2']))}</p>"
     )
 
@@ -62,8 +63,8 @@ def handle_path(path: str, backend: FriolamBackend | None = None) -> tuple[str, 
 
     if path == "/":
         body = (
-            "<p>Panel principal de Friolam con backend SQLite.</p>"
-            "<ul>"
+            "<p class='mb-3'>Panel principal de Friolam con backend SQLite.</p>"
+            "<ul class='list-disc space-y-1 pl-6'>"
             "<li><strong>Técnico:</strong> vista operativa.</li>"
             "<li><strong>Administrador:</strong> estado de plataforma.</li>"
             "<li><strong>Gerente:</strong> seguimiento estratégico.</li>"

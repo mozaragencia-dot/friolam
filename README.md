@@ -1,6 +1,6 @@
 # Friolam
 
-Friolam es una **web app con backend SQLite** y vistas separadas por rol:
+Friolam es una **web app con backend SQLite** y UI estilizada con **Tailwind CSS (CDN)**, con vistas separadas por rol:
 
 - Técnico
 - Administrador (azul)
@@ -44,3 +44,6 @@ python -m unittest discover -s tests -p 'test_*.py'
 ## Documentación de despliegue
 
 Guía completa de servidor: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
+
+
+> Nota: la UI usa `https://cdn.tailwindcss.com`, por lo que el servidor necesita salida a internet para cargar estilos.

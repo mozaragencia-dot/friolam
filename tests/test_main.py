@@ -62,6 +62,7 @@ class TestWebAppRoutes(unittest.TestCase):
         status, html, content_type = handle_path("/", backend=self.backend)
         self.assertEqual("200 OK", status)
         self.assertIn("Friolam Web App", html)
+        self.assertIn("cdn.tailwindcss.com", html)
         self.assertIn("text/html", content_type)
 
     def test_role_routes(self) -> None:
