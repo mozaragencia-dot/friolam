@@ -1,10 +1,10 @@
-# Manual de instalación de Friolam Web App en servidor (Ubuntu 22.04/24.04)
+# Manual de instalación de Friolam Web App + Backend (Ubuntu 22.04/24.04)
 
-Este manual está orientado a la nueva versión web con vistas separadas para:
+Esta versión incluye:
 
-- Técnico: `/tecnico`
-- Administrador: `/administrador`
-- Gerente: `/gerente`
+- Web app por rol (`/tecnico`, `/administrador`, `/gerente`)
+- Backend SQLite embebido
+- API (`/api/roles`, `/api/tecnico`, `/api/administrador`, `/api/gerente`)
 
 ## 1) Instalar dependencias base
 
@@ -13,7 +13,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git python3 python3-venv python3-pip
 ```
 
-## 2) Preparar carpeta y usuario de servicio
+## 2) Preparar carpeta y usuario
 
 ```bash
 sudo adduser --system --group --home /opt/friolam friolam
@@ -21,13 +21,17 @@ sudo mkdir -p /opt/friolam/app
 sudo chown -R friolam:friolam /opt/friolam
 ```
 
-## 3) Clonar el proyecto
+## 3) Copiar código (Git o SFTP)
+
+Con Git:
 
 ```bash
 sudo -u friolam -H git clone <URL_DEL_REPOSITORIO> /opt/friolam/app
 ```
 
-## 4) Crear entorno virtual e instalar app
+Con SFTP: sube el proyecto completo a `/opt/friolam/app`.
+
+## 4) Instalar app
 
 ```bash
 sudo -u friolam -H bash -lc '
@@ -39,7 +43,7 @@ pip install -e .
 '
 ```
 
-## 5) Prueba rápida manual
+## 5) Ejecutar y validar backend
 
 ```bash
 sudo -u friolam -H bash -lc '
@@ -49,15 +53,21 @@ friolam-web
 '
 ```
 
-Si arranca bien, verás: `Friolam web app escuchando en http://0.0.0.0:8000`.
+En otra terminal:
 
-## 6) Configurar como servicio systemd
+```bash
+curl http://127.0.0.1:8000/api/roles
+curl http://127.0.0.1:8000/api/administrador
+curl http://127.0.0.1:8000/api/gerente
+```
 
-Crea `/etc/systemd/system/friolam.service` con:
+## 6) Configurar systemd
+
+Crea `/etc/systemd/system/friolam.service`:
 
 ```ini
 [Unit]
-Description=Friolam Web App
+Description=Friolam Web App + Backend
 After=network.target
 
 [Service]
@@ -73,29 +83,26 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Aplicar cambios:
+Activar:
 
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable friolam
 sudo systemctl start friolam
+sudo systemctl status friolam
 ```
 
-Verificar:
+## 7) Datos del backend
+
+La app crea automáticamente `data/friolam.db` en el `WorkingDirectory`.
+
+Haz backup:
 
 ```bash
-sudo systemctl status friolam
-curl -I http://127.0.0.1:8000/
-curl -I http://127.0.0.1:8000/tecnico
-curl -I http://127.0.0.1:8000/administrador
-curl -I http://127.0.0.1:8000/gerente
+cp /opt/friolam/app/data/friolam.db /opt/friolam/app/data/friolam.db.bak
 ```
 
-## 7) (Opcional) Exponer con Nginx en 80/443
-
-Si quieres acceso público con dominio y SSL, monta Nginx como reverse proxy hacia `127.0.0.1:8000`.
-
-## 8) Actualización
+## 8) Actualizar
 
 ```bash
 sudo -u friolam -H bash -lc '
@@ -106,47 +113,3 @@ pip install -e .
 '
 sudo systemctl restart friolam
 ```
-
----
-
-Si quieres, te puedo dejar también el archivo exacto de Nginx para producción con HTTPS.
-
-## 9) ¿Se puede subir por FTP a cualquier servidor?
-
-Sí, **se puede**, pero no es lo más recomendable para despliegues repetibles.
-
-### Cuándo sí te sirve FTP/SFTP
-
-- Tienes hosting sencillo sin acceso Git.
-- Solo necesitas una instalación básica/manual.
-
-### Recomendación
-
-- Mejor usar **SFTP** (más seguro) en vez de FTP plano.
-- Mantener en el servidor una carpeta como `/opt/friolam/app` y subir allí el proyecto.
-
-### Flujo mínimo por SFTP
-
-1. Subir archivos del proyecto a `/opt/friolam/app`.
-2. Entrar por SSH y crear entorno virtual:
-   ```bash
-   cd /opt/friolam/app
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install --upgrade pip
-   pip install -e .
-   ```
-3. Ejecutar prueba:
-   ```bash
-   .venv/bin/friolam-web
-   ```
-4. Configurar `systemd` como en la sección anterior para que quede persistente.
-
-### Limitaciones de FTP
-
-- No tienes control de versiones como con Git.
-- Es más fácil sobrescribir archivos por error.
-- Más difícil automatizar despliegues.
-
-Si quieres, te preparo una variante del manual específica para **hosting compartido (cPanel/Plesk)**.
-

@@ -1,10 +1,17 @@
 # Friolam
 
-Friolam ahora está preparado como **web app** con vistas separadas por rol:
+Friolam es una **web app con backend SQLite** y vistas separadas por rol:
 
 - Técnico
 - Administrador (azul)
 - Gerente (morado)
+
+Además incluye API backend:
+
+- `/api/roles`
+- `/api/tecnico`
+- `/api/administrador`
+- `/api/gerente`
 
 ## Ejecutar local
 
@@ -22,6 +29,12 @@ Luego abre en el navegador:
 - http://127.0.0.1:8000/administrador
 - http://127.0.0.1:8000/gerente
 
+Prueba API backend:
+
+```bash
+curl http://127.0.0.1:8000/api/roles
+```
+
 ## Run tests
 
 ```bash
@@ -31,7 +44,3 @@ python -m unittest discover -s tests -p 'test_*.py'
 ## Documentación de despliegue
 
 Guía completa de servidor: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
-
-## FAQ rápida
-
-- **¿Puedo subirlo por FTP?** Sí, preferiblemente SFTP. Revisa la sección FTP en `docs/SERVER_INSTALL_ES.md`.
