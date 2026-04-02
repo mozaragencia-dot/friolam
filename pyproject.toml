@@ -14,6 +14,7 @@ authors = [
 
 [project.scripts]
 friolam = "friolam.main:main"
+friolam-web = "friolam.webapp:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

@@ -1,24 +1,26 @@
 # Friolam
 
-Friolam is an early-stage project scaffold to accelerate future product development.
+Friolam ahora está preparado como **web app** con vistas separadas por rol:
 
-## Current status
+- Técnico
+- Administrador
+- Gerente
 
-This repository now includes:
-
-- A Python package skeleton under `src/friolam`.
-- A small CLI entry point (`friolam`) that prints project status.
-- A minimal automated test suite.
-- A roadmap document to guide next iterations.
-
-## Quick start
+## Ejecutar local
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .
-friolam
+friolam-web
 ```
+
+Luego abre en el navegador:
+
+- http://127.0.0.1:8000/
+- http://127.0.0.1:8000/tecnico
+- http://127.0.0.1:8000/administrador
+- http://127.0.0.1:8000/gerente
 
 ## Run tests
 
@@ -26,10 +28,6 @@ friolam
 python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-## Next steps
+## Documentación de despliegue
 
-See [ROADMAP.md](ROADMAP.md) for milestones and backlog priorities.
-## Despliegue en servidor
-
-Consulta la guía en español: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
-
+Guía completa de servidor: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).

@@ -1,26 +1,20 @@
 # Friolam Roadmap
 
-## Milestone 0 — Foundation (current)
+## Milestone 0 — Web app base (completado)
 
-- [x] Create package scaffold.
-- [x] Add executable CLI command.
-- [x] Add minimal tests.
-- [x] Document quick-start workflow.
+- [x] Estructura de paquete Python.
+- [x] Web app WSGI sin dependencias externas.
+- [x] Vistas separadas para Técnico, Administrador y Gerente.
+- [x] Documentación de despliegue en servidor.
 
-## Milestone 1 — Core domain design
+## Milestone 1 — Persistencia y autenticación
 
-- [ ] Define the primary Friolam domain model.
-- [ ] Implement first domain service with unit tests.
-- [ ] Add configuration management (`.env` support and typed settings).
+- [ ] Persistencia real de datos por rol (SQLite/PostgreSQL).
+- [ ] Login por rol y gestión de sesiones.
+- [ ] Paneles con datos reales en lugar de demos.
 
-## Milestone 2 — Interface layer
+## Milestone 2 — Operación en producción
 
-- [ ] Expose an API layer (FastAPI or Flask).
-- [ ] Add structured logging and error handling.
-- [ ] Add health and readiness checks.
-
-## Milestone 3 — Delivery hardening
-
-- [ ] Add CI workflow for tests + lint.
-- [ ] Add container build and runtime docs.
-- [ ] Add semantic versioning + release notes template.
+- [ ] Reverse proxy Nginx + HTTPS.
+- [ ] Observabilidad (logs estructurados y métricas).
+- [ ] CI/CD para pruebas y despliegue automático.
