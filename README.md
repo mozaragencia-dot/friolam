@@ -1,17 +1,18 @@
 # Friolam
 
-Friolam es una **web app con backend SQLite** y UI estilizada con **Tailwind CSS (CDN)**, con vistas separadas por rol:
+Friolam fue reescrito como **web app completa** con backend de alto volumen basado en archivo SQLite.
 
-- Técnico
-- Administrador (azul)
-- Gerente (morado)
+## Base de datos de archivo (gigante)
 
-Además incluye API backend:
+La aplicación usa el archivo:
 
-- `/api/roles`
-- `/api/tecnico`
-- `/api/administrador`
-- `/api/gerente`
+- `data/friolam_gigante.db`
+
+Esta base está optimizada para volumen con:
+
+- `WAL` para concurrencia de lectura/escritura.
+- índices por `role` y `nombre`.
+- endpoints con paginación (`limit`/`offset`).
 
 ## Ejecutar local
 
@@ -22,28 +23,29 @@ pip install -e .
 friolam-web
 ```
 
-Luego abre en el navegador:
+## Web y API
 
-- http://127.0.0.1:8000/
-- http://127.0.0.1:8000/tecnico
-- http://127.0.0.1:8000/administrador
-- http://127.0.0.1:8000/gerente
+Web:
+- `/`
+- `/tecnico`
+- `/administrador`
+- `/gerente`
 
-Prueba API backend:
+API:
+- `GET /api/records?role=tecnico&limit=50&offset=0`
+- `GET /api/records/{id}`
+- `POST /api/records`
+
+Ejemplo POST:
 
 ```bash
-curl http://127.0.0.1:8000/api/roles
+curl -X POST http://127.0.0.1:8000/api/records \
+  -H 'Content-Type: application/json' \
+  -d '{"role":"gerente","nombre":"Carla","metric_name":"objetivos_trimestrales","metric_value":15}'
 ```
 
-## Run tests
+## Pruebas
 
 ```bash
 python -m unittest discover -s tests -p 'test_*.py'
 ```
-
-## Documentación de despliegue
-
-Guía completa de servidor: [docs/SERVER_INSTALL_ES.md](docs/SERVER_INSTALL_ES.md).
-
-
-> Nota: la UI usa `https://cdn.tailwindcss.com`, por lo que el servidor necesita salida a internet para cargar estilos.

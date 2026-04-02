@@ -1,19 +1,13 @@
-# Manual de instalación de Friolam Web App + Backend (Ubuntu 22.04/24.04)
+# Manual de despliegue: Friolam web gigante + backend de archivo
 
-Esta versión incluye:
-
-- Web app por rol (`/tecnico`, `/administrador`, `/gerente`)
-- Backend SQLite embebido
-- API (`/api/roles`, `/api/tecnico`, `/api/administrador`, `/api/gerente`)
-
-## 1) Instalar dependencias base
+## 1) Instalar dependencias
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y git python3 python3-venv python3-pip
 ```
 
-## 2) Preparar carpeta y usuario
+## 2) Preparar servidor
 
 ```bash
 sudo adduser --system --group --home /opt/friolam friolam
@@ -21,15 +15,11 @@ sudo mkdir -p /opt/friolam/app
 sudo chown -R friolam:friolam /opt/friolam
 ```
 
-## 3) Copiar código (Git o SFTP)
-
-Con Git:
+## 3) Subir código (Git o SFTP)
 
 ```bash
-sudo -u friolam -H git clone <URL_DEL_REPOSITORIO> /opt/friolam/app
+sudo -u friolam -H git clone <URL_DEL_REPO> /opt/friolam/app
 ```
-
-Con SFTP: sube el proyecto completo a `/opt/friolam/app`.
 
 ## 4) Instalar app
 
@@ -43,7 +33,7 @@ pip install -e .
 '
 ```
 
-## 5) Ejecutar y validar backend
+## 5) Probar backend gigante
 
 ```bash
 sudo -u friolam -H bash -lc '
@@ -56,18 +46,16 @@ friolam-web
 En otra terminal:
 
 ```bash
-curl http://127.0.0.1:8000/api/roles
-curl http://127.0.0.1:8000/api/administrador
-curl http://127.0.0.1:8000/api/gerente
+curl 'http://127.0.0.1:8000/api/records?limit=20&offset=0'
 ```
 
-## 6) Configurar systemd
+## 6) Servicio systemd
 
-Crea `/etc/systemd/system/friolam.service`:
+`/etc/systemd/system/friolam.service`
 
 ```ini
 [Unit]
-Description=Friolam Web App + Backend
+Description=Friolam Web Gigante
 After=network.target
 
 [Service]
@@ -92,24 +80,14 @@ sudo systemctl start friolam
 sudo systemctl status friolam
 ```
 
-## 7) Datos del backend
+## 7) Archivo de base de datos
 
-La app crea automáticamente `data/friolam.db` en el `WorkingDirectory`.
+Ruta principal:
 
-Haz backup:
+- `/opt/friolam/app/data/friolam_gigante.db`
 
-```bash
-cp /opt/friolam/app/data/friolam.db /opt/friolam/app/data/friolam.db.bak
-```
-
-## 8) Actualizar
+Backup recomendado:
 
 ```bash
-sudo -u friolam -H bash -lc '
-cd /opt/friolam/app
-git pull --ff-only
-source .venv/bin/activate
-pip install -e .
-'
-sudo systemctl restart friolam
+cp /opt/friolam/app/data/friolam_gigante.db /opt/friolam/app/data/friolam_gigante.db.bak
 ```

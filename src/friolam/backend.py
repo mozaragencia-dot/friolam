@@ -1,87 +1,128 @@
-"""Backend de persistencia para Friolam (SQLite)."""
+"""Backend de alto volumen para Friolam usando un archivo SQLite."""
 
 from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
+from typing import Any
 
 
 class FriolamBackend:
-    """Simple backend layer backed by SQLite."""
+    """Backend file-based con soporte para gran volumen de registros."""
 
-    def __init__(self, db_path: str) -> None:
-        self.db_path = db_path
-        self._ensure_schema()
-        self._ensure_seed_data()
+    def __init__(self, db_file: str) -> None:
+        self.db_file = db_file
+        Path(db_file).parent.mkdir(parents=True, exist_ok=True)
+        self._setup()
 
     def _connect(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_file)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA synchronous=NORMAL")
+        conn.execute("PRAGMA temp_store=MEMORY")
         return conn
 
-    def _ensure_schema(self) -> None:
+    def _setup(self) -> None:
         with self._connect() as conn:
             conn.execute(
                 """
-                CREATE TABLE IF NOT EXISTS roles (
-                    role TEXT PRIMARY KEY,
+                CREATE TABLE IF NOT EXISTS records (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    role TEXT NOT NULL,
                     nombre TEXT NOT NULL,
-                    detalle_1 TEXT NOT NULL,
-                    detalle_2 INTEGER NOT NULL
+                    metric_name TEXT NOT NULL,
+                    metric_value INTEGER NOT NULL,
+                    UNIQUE(role, nombre)
                 )
                 """
             )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_records_role ON records(role)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_records_nombre ON records(nombre)")
 
-    def _ensure_seed_data(self) -> None:
-        defaults = {
-            "tecnico": ("Ana", "Redes", 5),
-            "administrador": ("Luis", "Sistemas activos", 12),
-            "gerente": ("María", "Objetivos trimestrales", 4),
-        }
+        if self.count_records() == 0:
+            self.seed_defaults()
+
+    def seed_defaults(self) -> None:
+        self.upsert_record("tecnico", "Ana", "tickets_abiertos", 5)
+        self.upsert_record("administrador", "Luis", "sistemas_activos", 12)
+        self.upsert_record("gerente", "María", "objetivos_trimestrales", 4)
+
+    def upsert_record(
+        self,
+        role: str,
+        nombre: str,
+        metric_name: str,
+        metric_value: int,
+    ) -> int:
         with self._connect() as conn:
-            for role, values in defaults.items():
-                conn.execute(
-                    """
-                    INSERT INTO roles(role, nombre, detalle_1, detalle_2)
-                    VALUES (?, ?, ?, ?)
-                    ON CONFLICT(role) DO NOTHING
-                    """,
-                    (role, values[0], values[1], values[2]),
-                )
+            conn.execute(
+                """
+                INSERT INTO records(role, nombre, metric_name, metric_value)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(role, nombre)
+                DO UPDATE SET metric_name = excluded.metric_name,
+                              metric_value = excluded.metric_value
+                """,
+                (role, nombre, metric_name, metric_value),
+            )
+            row = conn.execute(
+                "SELECT id FROM records WHERE role = ? AND nombre = ?", (role, nombre)
+            ).fetchone()
+            return int(row["id"])
 
-    def get_role(self, role: str) -> dict[str, str | int]:
+    def get_record(self, record_id: int) -> dict[str, Any] | None:
         with self._connect() as conn:
             row = conn.execute(
-                "SELECT role, nombre, detalle_1, detalle_2 FROM roles WHERE role = ?",
-                (role,),
+                "SELECT id, role, nombre, metric_name, metric_value FROM records WHERE id = ?",
+                (record_id,),
             ).fetchone()
         if row is None:
-            raise KeyError(role)
-        return {
-            "role": row["role"],
-            "nombre": row["nombre"],
-            "detalle_1": row["detalle_1"],
-            "detalle_2": row["detalle_2"],
-        }
+            return None
+        return dict(row)
 
-    def get_all_roles(self) -> list[dict[str, str | int]]:
+    def list_records(
+        self,
+        role: str | None = None,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        limit = max(1, min(limit, 500))
+        offset = max(0, offset)
         with self._connect() as conn:
-            rows = conn.execute(
-                "SELECT role, nombre, detalle_1, detalle_2 FROM roles ORDER BY role"
-            ).fetchall()
-        return [
-            {
-                "role": row["role"],
-                "nombre": row["nombre"],
-                "detalle_1": row["detalle_1"],
-                "detalle_2": row["detalle_2"],
-            }
-            for row in rows
-        ]
+            if role:
+                rows = conn.execute(
+                    """
+                    SELECT id, role, nombre, metric_name, metric_value
+                    FROM records
+                    WHERE role = ?
+                    ORDER BY id
+                    LIMIT ? OFFSET ?
+                    """,
+                    (role, limit, offset),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT id, role, nombre, metric_name, metric_value
+                    FROM records
+                    ORDER BY id
+                    LIMIT ? OFFSET ?
+                    """,
+                    (limit, offset),
+                ).fetchall()
+        return [dict(r) for r in rows]
+
+    def count_records(self, role: str | None = None) -> int:
+        with self._connect() as conn:
+            if role:
+                row = conn.execute(
+                    "SELECT COUNT(*) AS total FROM records WHERE role = ?", (role,)
+                ).fetchone()
+            else:
+                row = conn.execute("SELECT COUNT(*) AS total FROM records").fetchone()
+        return int(row["total"])
 
 
 def default_backend() -> FriolamBackend:
-    """Create backend in local data directory."""
-    data_dir = Path("data")
-    data_dir.mkdir(exist_ok=True)
-    return FriolamBackend(str(data_dir / "friolam.db"))
+    return FriolamBackend("data/friolam_gigante.db")

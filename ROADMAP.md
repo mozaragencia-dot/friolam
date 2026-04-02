@@ -1,21 +1,13 @@
 # Friolam Roadmap
 
-## Milestone 0 — Web app + backend (completado)
+## Estado actual
 
-- [x] Estructura de paquete Python.
-- [x] Web app WSGI.
-- [x] Backend SQLite para datos por rol.
-- [x] Vistas separadas para Técnico, Administrador y Gerente.
-- [x] API básica por rol.
+- [x] Reescritura total como web app + backend de archivo SQLite.
+- [x] API paginada para alto volumen.
+- [x] UI Tailwind con vistas separadas por rol.
 
-## Milestone 1 — Backend productivo
+## Siguiente fase
 
-- [ ] CRUD completo por rol (crear/editar/eliminar).
-- [ ] Validaciones de entrada y manejo de errores enriquecido.
-- [ ] Migraciones de base de datos.
-
-## Milestone 2 — Seguridad y operación
-
-- [ ] Login por rol y sesiones.
-- [ ] Reverse proxy Nginx + HTTPS.
-- [ ] CI/CD para pruebas y despliegue.
+- [ ] CRUD con borrado y edición por endpoint.
+- [ ] autenticación por rol.
+- [ ] migraciones/versionado de esquema.
