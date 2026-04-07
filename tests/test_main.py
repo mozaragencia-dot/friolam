@@ -33,6 +33,10 @@ class TestBackendGigante(unittest.TestCase):
         self.assertIsNotNone(rec)
         self.assertEqual("Pedro", rec["nombre"])
 
+    def test_summary_by_role(self) -> None:
+        summary = self.backend.summary_by_role()
+        self.assertIn("tecnico", summary)
+
 
 class TestWebApp(unittest.TestCase):
     def setUp(self) -> None:
@@ -53,6 +57,16 @@ class TestWebApp(unittest.TestCase):
         _, gerente_html, _ = handle_http("GET", "/gerente", "", b"", backend=self.backend)
         self.assertIn("#1d4ed8", admin_html)
         self.assertIn("#9333ea", gerente_html)
+
+    def test_ionic_route(self) -> None:
+        status, html, _ = handle_http("GET", "/ionic", "", b"", backend=self.backend)
+        self.assertEqual("200 OK", status)
+        self.assertIn("@ionic/core", html)
+
+    def test_api_dashboard(self) -> None:
+        status, payload, _ = handle_http("GET", "/api/dashboard", "", b"", backend=self.backend)
+        self.assertEqual("200 OK", status)
+        self.assertIn("summary_by_role", payload)
 
     def test_api_list(self) -> None:
         status, payload, ctype = handle_http("GET", "/api/records", "limit=10", b"", backend=self.backend)

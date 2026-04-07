@@ -1,18 +1,27 @@
 # Friolam
 
-Friolam fue reescrito como **web app completa** con backend de alto volumen basado en archivo SQLite.
+Ahora Friolam incluye una versión web funcional para captura y dashboard usando **Ionic (CDN)** + backend SQLite en archivo.
 
-## Base de datos de archivo (gigante)
+## ¿Qué ya funciona?
 
-La aplicación usa el archivo:
+- Los técnicos (y otros roles) pueden ingresar información desde `/ionic`.
+- Esa información se guarda en el archivo `data/friolam_gigante.db`.
+- El dashboard muestra resumen por rol y últimos registros.
 
-- `data/friolam_gigante.db`
+## Rutas principales
 
-Esta base está optimizada para volumen con:
+UI:
+- `/` (resumen)
+- `/ionic` (formulario + dashboard en Ionic)
+- `/tecnico`
+- `/administrador`
+- `/gerente`
 
-- `WAL` para concurrencia de lectura/escritura.
-- índices por `role` y `nombre`.
-- endpoints con paginación (`limit`/`offset`).
+API:
+- `GET /api/dashboard`
+- `GET /api/records?role=tecnico&limit=50&offset=0`
+- `GET /api/records/{id}`
+- `POST /api/records`
 
 ## Ejecutar local
 
@@ -23,25 +32,12 @@ pip install -e .
 friolam-web
 ```
 
-## Web y API
-
-Web:
-- `/`
-- `/tecnico`
-- `/administrador`
-- `/gerente`
-
-API:
-- `GET /api/records?role=tecnico&limit=50&offset=0`
-- `GET /api/records/{id}`
-- `POST /api/records`
-
-Ejemplo POST:
+## Ejemplo de carga por API
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/records \
   -H 'Content-Type: application/json' \
-  -d '{"role":"gerente","nombre":"Carla","metric_name":"objetivos_trimestrales","metric_value":15}'
+  -d '{"role":"tecnico","nombre":"Juan","metric_name":"tickets_abiertos","metric_value":8}'
 ```
 
 ## Pruebas

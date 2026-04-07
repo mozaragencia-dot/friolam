@@ -2,12 +2,12 @@
 
 ## Estado actual
 
-- [x] Reescritura total como web app + backend de archivo SQLite.
-- [x] API paginada para alto volumen.
-- [x] UI Tailwind con vistas separadas por rol.
+- [x] Reescritura web + backend SQLite de archivo.
+- [x] Dashboard Ionic para captura por técnicos y visualización.
+- [x] API para insertar y consultar registros.
 
-## Siguiente fase
+## Próximo
 
-- [ ] CRUD con borrado y edición por endpoint.
-- [ ] autenticación por rol.
-- [ ] migraciones/versionado de esquema.
+- [ ] autenticación y permisos por rol.
+- [ ] filtros avanzados por fecha/estado.
+- [ ] exportación CSV/Excel del dashboard.

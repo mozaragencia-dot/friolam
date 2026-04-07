@@ -30,16 +30,123 @@ def render_page(title: str, body: str, accent_color: str) -> str:
   <main class='mx-auto max-w-5xl p-6'>
     <header class='mb-6 rounded-xl border-l-8 bg-white p-5 shadow' style='border-color: {escape(accent_color)}'>
       <h1 class='text-3xl font-bold' style='color: {escape(accent_color)}'>{escape(title)}</h1>
-      <p class='mt-2 text-sm'>Base de datos en archivo: <code>data/friolam_gigante.db</code></p>
+      <p class='mt-2 text-sm'>Base de datos: <code>data/friolam_gigante.db</code></p>
       <nav class='mt-4 flex flex-wrap gap-2'>
         <a class='rounded bg-slate-200 px-3 py-1' href='/'>Inicio</a>
         <a class='rounded bg-slate-200 px-3 py-1' href='/tecnico'>Técnico</a>
         <a class='rounded bg-slate-200 px-3 py-1' href='/administrador'>Administrador</a>
         <a class='rounded bg-slate-200 px-3 py-1' href='/gerente'>Gerente</a>
+        <a class='rounded bg-emerald-200 px-3 py-1' href='/ionic'>Ionic Dashboard</a>
       </nav>
     </header>
     <section class='rounded-xl bg-white p-6 shadow'>{body}</section>
   </main>
+</body>
+</html>"""
+
+
+def render_ionic_page() -> str:
+    """Single-file Ionic dashboard + capture form."""
+    return """<!doctype html>
+<html lang='es'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <title>Friolam Ionic Dashboard</title>
+  <script type='module' src='https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js'></script>
+  <script nomodule src='https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js'></script>
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css' />
+</head>
+<body>
+  <ion-app>
+    <ion-header>
+      <ion-toolbar color='primary'>
+        <ion-title>Friolam - Captura Técnicos + Dashboard</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class='ion-padding'>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Ingreso de información</ion-card-title>
+          <ion-card-subtitle>Técnicos / Administrador / Gerente</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position='stacked'>Rol</ion-label>
+            <ion-select id='role' value='tecnico'>
+              <ion-select-option value='tecnico'>Técnico</ion-select-option>
+              <ion-select-option value='administrador'>Administrador</ion-select-option>
+              <ion-select-option value='gerente'>Gerente</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label position='stacked'>Nombre</ion-label>
+            <ion-input id='nombre' placeholder='Ej. Juan'></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position='stacked'>Métrica</ion-label>
+            <ion-input id='metric_name' value='tickets_abiertos'></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position='stacked'>Valor</ion-label>
+            <ion-input id='metric_value' type='number' value='1'></ion-input>
+          </ion-item>
+          <ion-button expand='block' class='ion-margin-top' id='saveBtn'>Guardar</ion-button>
+          <ion-text id='msg'></ion-text>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Resumen por rol</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <pre id='summary'></pre>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Últimos registros</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <pre id='table'></pre>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ion-app>
+
+  <script>
+    async function refreshData() {
+      const dashboard = await fetch('/api/dashboard').then(r => r.json());
+      const list = await fetch('/api/records?limit=25').then(r => r.json());
+      document.getElementById('summary').textContent = JSON.stringify(dashboard, null, 2);
+      document.getElementById('table').textContent = JSON.stringify(list.items, null, 2);
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const payload = {
+        role: document.getElementById('role').value,
+        nombre: document.getElementById('nombre').value,
+        metric_name: document.getElementById('metric_name').value,
+        metric_value: Number(document.getElementById('metric_value').value || 0),
+      };
+
+      const resp = await fetch('/api/records', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await resp.json();
+      const msg = document.getElementById('msg');
+      msg.textContent = resp.ok ? `Guardado ID ${data.id}` : `Error: ${data.error}`;
+      await refreshData();
+    });
+
+    refreshData();
+  </script>
 </body>
 </html>"""
 
@@ -71,6 +178,16 @@ def handle_http(
     backend: FriolamBackend | None = None,
 ) -> tuple[str, str, str]:
     backend = backend or default_backend()
+
+    if method == "GET" and path == "/ionic":
+        return "200 OK", render_ionic_page(), "text/html; charset=utf-8"
+
+    if method == "GET" and path == "/api/dashboard":
+        payload = {
+            "summary_by_role": backend.summary_by_role(),
+            "total_records": backend.count_records(),
+        }
+        return "200 OK", json.dumps(payload, ensure_ascii=False), "application/json; charset=utf-8"
 
     if method == "POST" and path == "/api/records":
         try:
@@ -109,8 +226,8 @@ def handle_http(
     if method == "GET" and path == "/":
         records = backend.list_records(limit=20)
         body_html = (
-            "<p class='mb-4'>Plataforma web + backend para alto volumen (paginado por API).</p>"
-            "<p class='mb-2'><strong>Endpoints:</strong> GET /api/records, GET /api/records/{id}, POST /api/records</p>"
+            "<p class='mb-4'>Plataforma web + backend para alto volumen.</p>"
+            "<p class='mb-2'><strong>Dashboard Ionic:</strong> <a href='/ionic'>abrir aquí</a></p>"
             + _table_html(records)
         )
         return "200 OK", render_page("Friolam Web Gigante", body_html, accent_color="#334155"), "text/html; charset=utf-8"

@@ -1,4 +1,4 @@
-# Manual de despliegue: Friolam web gigante + backend de archivo
+# Manual de despliegue: Friolam con Ionic Dashboard + backend SQLite
 
 ## 1) Instalar dependencias
 
@@ -15,7 +15,7 @@ sudo mkdir -p /opt/friolam/app
 sudo chown -R friolam:friolam /opt/friolam
 ```
 
-## 3) Subir código (Git o SFTP)
+## 3) Subir código
 
 ```bash
 sudo -u friolam -H git clone <URL_DEL_REPO> /opt/friolam/app
@@ -33,7 +33,7 @@ pip install -e .
 '
 ```
 
-## 5) Probar backend gigante
+## 5) Ejecutar y validar
 
 ```bash
 sudo -u friolam -H bash -lc '
@@ -43,19 +43,32 @@ friolam-web
 '
 ```
 
-En otra terminal:
+Validar:
 
 ```bash
-curl 'http://127.0.0.1:8000/api/records?limit=20&offset=0'
+curl http://127.0.0.1:8000/api/dashboard
 ```
 
-## 6) Servicio systemd
+Abrir interfaz:
+
+- `http://TU_SERVIDOR:8000/ionic`
+
+## 6) Base de datos de archivo
+
+- Archivo principal: `/opt/friolam/app/data/friolam_gigante.db`
+- Backup:
+
+```bash
+cp /opt/friolam/app/data/friolam_gigante.db /opt/friolam/app/data/friolam_gigante.db.bak
+```
+
+## 7) Servicio systemd
 
 `/etc/systemd/system/friolam.service`
 
 ```ini
 [Unit]
-Description=Friolam Web Gigante
+Description=Friolam Ionic Dashboard
 After=network.target
 
 [Service]
@@ -71,23 +84,9 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Activar:
-
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable friolam
 sudo systemctl start friolam
 sudo systemctl status friolam
-```
-
-## 7) Archivo de base de datos
-
-Ruta principal:
-
-- `/opt/friolam/app/data/friolam_gigante.db`
-
-Backup recomendado:
-
-```bash
-cp /opt/friolam/app/data/friolam_gigante.db /opt/friolam/app/data/friolam_gigante.db.bak
 ```

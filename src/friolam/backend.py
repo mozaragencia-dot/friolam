@@ -113,6 +113,14 @@ class FriolamBackend:
                 ).fetchall()
         return [dict(r) for r in rows]
 
+
+    def summary_by_role(self) -> dict[str, int]:
+        with self._connect() as conn:
+            rows = conn.execute(
+                "SELECT role, COUNT(*) AS total FROM records GROUP BY role ORDER BY role"
+            ).fetchall()
+        return {str(r["role"]): int(r["total"]) for r in rows}
+
     def count_records(self, role: str | None = None) -> int:
         with self._connect() as conn:
             if role:
