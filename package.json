@@ -1,0 +1,14 @@
+{
+  "name": "friolam-ionic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Friolam web app with Ionic + Node backend",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "test": "node --test tests_node/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

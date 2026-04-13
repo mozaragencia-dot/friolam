@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friolam Ionic</title>
+  <script type='module' src='https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js'></script>
+  <script nomodule src='https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js'></script>
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css' />
+</head>
+<body>
+  <ion-app>
+    <ion-header>
+      <ion-toolbar color="primary"><ion-title>Friolam - Ionic</ion-title></ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-card>
+        <ion-card-header><ion-card-title>Ingreso de información</ion-card-title></ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="stacked">Rol</ion-label>
+            <ion-select id="role" value="tecnico">
+              <ion-select-option value="tecnico">Técnico</ion-select-option>
+              <ion-select-option value="administrador">Administrador</ion-select-option>
+              <ion-select-option value="gerente">Gerente</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item><ion-label position="stacked">Nombre</ion-label><ion-input id="nombre"></ion-input></ion-item>
+          <ion-item><ion-label position="stacked">Métrica</ion-label><ion-input id="metric_name" value="tickets_abiertos"></ion-input></ion-item>
+          <ion-item><ion-label position="stacked">Valor</ion-label><ion-input id="metric_value" type="number" value="1"></ion-input></ion-item>
+          <ion-button expand="block" id="saveBtn" class="ion-margin-top">Guardar</ion-button>
+          <ion-text id="msg"></ion-text>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header><ion-card-title>Dashboard</ion-card-title></ion-card-header>
+        <ion-card-content><pre id="dashboard"></pre></ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header><ion-card-title>Registros</ion-card-title></ion-card-header>
+        <ion-card-content><pre id="records"></pre></ion-card-content>
+      </ion-card>
+    </ion-content>
+  </ion-app>
+
+<script>
+async function refresh() {
+  const dashboard = await fetch('/api/dashboard').then(r => r.json());
+  const records = await fetch('/api/records').then(r => r.json());
+  document.getElementById('dashboard').textContent = JSON.stringify(dashboard, null, 2);
+  document.getElementById('records').textContent = JSON.stringify(records.items, null, 2);
+}
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const payload = {
+    role: document.getElementById('role').value,
+    nombre: document.getElementById('nombre').value,
+    metric_name: document.getElementById('metric_name').value,
+    metric_value: Number(document.getElementById('metric_value').value || 0)
+  };
+  const resp = await fetch('/api/records', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await resp.json();
+  document.getElementById('msg').textContent = resp.ok ? `Guardado ID ${data.id}` : 'Error guardando';
+  await refresh();
+});
+
+refresh();
+</script>
+</body>
+</html>
