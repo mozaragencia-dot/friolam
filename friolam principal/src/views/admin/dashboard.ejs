@@ -1,0 +1,10 @@
+<%- include('../partials/top', {title:'Dashboard Admin'}) %>
+<h2>Panel administrativo</h2>
+<div class='grid'>
+  <% Object.keys(statusLabels).forEach((key) => { %>
+    <div class='card'><strong><%= statusLabels[key] %></strong><p><%= stats[key] || 0 %></p></div>
+  <% }) %>
+</div>
+<a href='/admin/services' class='btn'>Ver servicios</a>
+<a href='/admin/settings' class='btn'>Configuración</a>
+<%- include('../partials/bottom') %>

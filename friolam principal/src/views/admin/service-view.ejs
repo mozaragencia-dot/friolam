@@ -1,0 +1,17 @@
+<%- include('../partials/top', {title:'Detalle Servicio'}) %>
+<h2>Servicio #<%= service.id %> - <%= service.service_name %></h2>
+<p><strong>Cliente:</strong> <%= service.client_name %> / <%= service.local_name %></p>
+<p><strong>Estado:</strong> <%= statusLabels[service.status] %></p>
+<p><strong>Técnico:</strong> <%= service.technician_name || 'Sin asignar' %></p>
+<p><strong>Dirección:</strong> <%= service.address %>, <%= service.commune %>, <%= service.city %></p>
+<p><strong>Observaciones:</strong> <%= service.observations || '-' %></p>
+<h3>Máquinas</h3>
+<ul><% machines.forEach(m=>{ %><li><%= m.machine_name %> - <%= m.work_done || '-' %></li><% }) %></ul>
+<h3>Evidencia</h3>
+<ul><% media.forEach(m=>{ %><li><%= m.media_type %>: <%= m.file_path %></li><% }) %></ul>
+<form method='post' action='/api/services/status' class='inline'>
+  <input type='hidden' name='id_service' value='<%= service.id %>'>
+  <select name='status'><% Object.keys(statusLabels).forEach((k)=>{ %><option value='<%= k %>'><%= statusLabels[k] %></option><% }) %></select>
+  <button>Cambiar estado</button>
+</form>
+<%- include('../partials/bottom') %>

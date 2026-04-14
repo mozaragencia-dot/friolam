@@ -1,0 +1,14 @@
+<%- include('../partials/top', {title:'Configuración'}) %>
+<h2>Clientes y Locales</h2>
+<div class='grid-2'>
+<form method='post' action='/admin/clients' class='card'>
+<h3>Nuevo cliente</h3><input name='name' placeholder='Nombre' required><input name='tax_id' placeholder='RUT'>
+<input name='contact_email' placeholder='Email'><input name='contact_phone' placeholder='Teléfono'><button>Guardar cliente</button>
+</form>
+<form method='post' action='/admin/subclients' class='card'>
+<h3>Nuevo local</h3><select name='client_id' required><option value=''>Cliente</option><% clients.forEach(c=>{ %><option value='<%= c.id %>'><%= c.name %></option><% }) %></select>
+<input name='local_name' placeholder='Nombre local' required><input name='fantasy_name' placeholder='Nombre fantasía'>
+<input name='address' placeholder='Dirección'><input name='commune' placeholder='Comuna'><input name='city' placeholder='Ciudad'><input name='phone' placeholder='Teléfono'><button>Guardar local</button>
+</form>
+</div>
+<%- include('../partials/bottom') %>

@@ -1,0 +1,5 @@
+<%- include('../partials/top', {title:'Inicio Técnico'}) %>
+<h2>Hola <%= user.name %></h2>
+<div class='grid'><div class='card'><strong>Pendientes</strong><p><%= summary.pending %></p></div><div class='card'><strong>Terminados</strong><p><%= summary.done %></p></div></div>
+<a class='btn' href='/tech/services'>Ver tareas</a>
+<%- include('../partials/bottom') %>

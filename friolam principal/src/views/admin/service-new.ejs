@@ -1,0 +1,18 @@
+<%- include('../partials/top', {title:'Nuevo Servicio'}) %>
+<h2>Nuevo servicio</h2>
+<form method='post' action='/admin/services' class='grid-2'>
+  <input name='service_name' placeholder='Nombre servicio' required>
+  <input name='service_type' placeholder='Tipo servicio' required>
+  <input name='ticket' placeholder='Ticket'>
+  <input name='invoice' placeholder='Factura'>
+  <select name='client_id' required><option value=''>Cliente</option><% clients.forEach(c=>{ %><option value='<%= c.id %>'><%= c.name %></option><% }) %></select>
+  <select name='subclient_id' required><option value=''>Local</option><% subclients.forEach(s=>{ %><option value='<%= s.id %>'><%= s.local_name %></option><% }) %></select>
+  <select name='technician_id'><option value=''>Asignar técnico</option><% technicians.forEach(t=>{ %><option value='<%= t.id %>'><%= t.name %></option><% }) %></select>
+  <input name='scheduled_date' type='date'>
+  <input name='scheduled_time' type='time'>
+  <input name='client_phone' placeholder='Teléfono cliente'>
+  <input name='fantasy_name' placeholder='Nombre fantasía'>
+  <textarea name='observations' placeholder='Observaciones'></textarea>
+  <button>Guardar</button>
+</form>
+<%- include('../partials/bottom') %>

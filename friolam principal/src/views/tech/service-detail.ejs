@@ -1,0 +1,32 @@
+<%- include('../partials/top', {title:'Detalle Servicio'}) %>
+<h2><%= service.service_name %></h2>
+<p><strong>Cliente:</strong> <%= service.client_name %> / <%= service.local_name %></p>
+<p><strong>Dirección:</strong> <%= service.address %></p>
+<form id='tech-form' class='grid-2'>
+  <input type='hidden' name='id_service' value='<%= service.id %>'>
+  <input name='client_phone' value='<%= service.client_phone || service.subclient_phone || '' %>' placeholder='Teléfono cliente editable'>
+  <input name='fantasy_name' value='<%= service.fantasy_name || '' %>' placeholder='Nombre fantasía editable'>
+  <textarea name='maintenance_data' placeholder='Checklist mantención'><%= service.maintenance_data || '' %></textarea>
+  <textarea name='postmix_data' placeholder='Checklist postmix'><%= service.postmix_data || '' %></textarea>
+  <textarea name='observations' placeholder='Observaciones'><%= service.observations || '' %></textarea>
+  <textarea name='closing_data' placeholder='Firma, receptor, hora cierre'><%= service.closing_data || '' %></textarea>
+  <button type='button' onclick='saveTechnical()'>Guardar formulario</button>
+</form>
+
+<h3>Máquinas asociadas</h3>
+<ul><% machines.forEach(m=>{ %><li><%= m.machine_name %> - <%= m.diagnosis || '-' %></li><% }) %></ul>
+<form id='machine-form' class='inline'>
+  <input type='hidden' name='service_id' value='<%= service.id %>'>
+  <input name='machine_name' placeholder='Máquina'>
+  <input name='brand' placeholder='Marca'>
+  <input name='model' placeholder='Modelo'>
+  <input name='work_done' placeholder='Trabajo realizado'>
+  <button type='button' onclick='saveMachine()'>Agregar máquina</button>
+</form>
+
+<form id='status-form' class='inline'>
+  <input type='hidden' name='id_service' value='<%= service.id %>'>
+  <select name='status'><% Object.keys(statusLabels).forEach((k)=>{ %><option value='<%= k %>' <%= String(service.status)===String(k)?'selected':'' %>><%= statusLabels[k] %></option><% }) %></select>
+  <button type='button' onclick='updateStatus()'>Actualizar estado</button>
+</form>
+<%- include('../partials/bottom') %>

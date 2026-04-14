@@ -1,0 +1,15 @@
+<%- include('../partials/top', {title:'Servicios'}) %>
+<h2>Servicios</h2>
+<a class='btn' href='/admin/services/new'>+ Nuevo servicio</a>
+<form class='inline'>
+  <select name='status'><option value=''>Estado</option><% Object.keys(statusLabels).forEach((k)=>{ %><option value='<%= k %>' <%= filters.status==k?'selected':'' %>><%= statusLabels[k] %></option><% }) %></select>
+  <select name='technician_id'><option value=''>Técnico</option><% technicians.forEach(t=>{ %><option value='<%= t.id %>'><%= t.name %></option><% }) %></select>
+  <select name='client_id'><option value=''>Cliente</option><% clients.forEach(c=>{ %><option value='<%= c.id %>'><%= c.name %></option><% }) %></select>
+  <button>Filtrar</button>
+</form>
+<table><tr><th>ID</th><th>Servicio</th><th>Cliente</th><th>Local</th><th>Técnico</th><th>Estado</th><th>Acciones</th></tr>
+<% services.forEach(s=>{ %>
+<tr><td><%= s.id %></td><td><%= s.service_name %></td><td><%= s.client_name %></td><td><%= s.local_name %></td><td><%= s.technician_name || '-' %></td><td><%= statusLabels[s.status] %></td>
+<td><a href='/admin/services/<%= s.id %>'>Ver</a> | <a href='/Services/view/<%= s.id %>' target='_blank'>PDF</a></td></tr>
+<% }) %></table>
+<%- include('../partials/bottom') %>
