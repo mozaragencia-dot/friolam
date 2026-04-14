@@ -1,0 +1,6 @@
+body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;color:#1f2937}main{padding:16px}nav{padding:10px;background:#0d47a1}nav a{color:#fff;margin-right:10px;text-decoration:none}.btn,button{background:#0d6efd;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-block}
+.card{background:#fff;border-radius:12px;padding:12px;margin:8px 0;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}input,textarea,select{width:100%;padding:9px;border:1px solid #d1d5db;border-radius:8px}textarea{min-height:100px}
+table{width:100%;border-collapse:collapse;background:#fff}td,th{border:1px solid #e5e7eb;padding:8px}.badge{display:inline-block;background:#e0f2fe;padding:4px 8px;border-radius:20px}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh}.error{color:#b91c1c}.inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:700px){.grid-2{grid-template-columns:1fr}nav a{display:inline-block;margin-bottom:6px}}

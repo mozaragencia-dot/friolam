@@ -1,0 +1,14 @@
+<%- include('../partials/top', {title:'Mis Servicios'}) %>
+<h2>Servicios asignados</h2>
+<div class='cards'>
+<% services.forEach(s=>{ %>
+  <a class='card' href='/tech/services/<%= s.id %>'>
+    <h3><%= s.service_name %></h3>
+    <p><strong>Cliente:</strong> <%= s.client_name %></p>
+    <p><strong>Local:</strong> <%= s.local_name %></p>
+    <p><strong>Dirección:</strong> <%= s.address %></p>
+    <p class='badge'><%= statusLabels[s.status] %></p>
+  </a>
+<% }) %>
+</div>
+<%- include('../partials/bottom') %>
